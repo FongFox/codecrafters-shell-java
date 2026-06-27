@@ -14,11 +14,12 @@ set -e # Exit early if any commands fail
 # - Edit .codecrafters/compile.sh to change how your program compiles remotely
 (
   cd "$(dirname "$0")" # Ensure compile steps are run within the repository directory
-  mvn -q -B package -Ddir=/tmp/codecrafters-build-shell-java
+  chmod +x mvnw
+  ./mvnw -q -B package -Ddir=/tmp/codecrafters-build-shell-java
 )
 
 # Copied from .codecrafters/run.sh
 #
 # - Edit this to change how your program runs locally
 # - Edit .codecrafters/run.sh to change how your program runs remotely
-exec java --enable-native-access=ALL-UNNAMED --enable-preview -jar /tmp/codecrafters-build-shell-java/codecrafters-shell.jar "$@"
+exec java --enable-preview -jar /tmp/codecrafters-build-shell-java/codecrafters-shell.jar "$@"
