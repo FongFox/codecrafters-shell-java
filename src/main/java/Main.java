@@ -4,8 +4,10 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("$ ");
-        String input = sc.nextLine();
-        System.out.printf("%s: command not found%n", input);
+        while (true) {
+            System.out.print("$ ");
+            String input = sc.nextLine();
+            System.out.printf("%s: command not found%n", input);
+        }
     }
 }
