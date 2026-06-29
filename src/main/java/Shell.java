@@ -4,7 +4,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class Shell {
-    private static final Set<String> BUILTINS = Set.of("echo", "type", "exit");
+    private static final Set<String> BUILTINS = Set.of("echo", "type", "pwd", "exit");
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
@@ -22,6 +22,7 @@ public class Shell {
             switch (command) {
                 case "echo" -> handleEcho(arguments);
                 case "type" -> handleType(arguments);
+                case "pwd" -> handlePwd();
                 case "exit" -> handleExit();
                 default -> handleUnknown(command, arguments);
             }
@@ -31,10 +32,6 @@ public class Shell {
     // --- built-in commands ---
     private void handleEcho(String[] arguments) {
         System.out.println(String.join(" ", arguments));
-    }
-
-    private void handleExit() {
-        System.exit(0);
     }
 
     private void handleType(String[] arguments) {
@@ -49,6 +46,14 @@ public class Shell {
                 System.out.printf("%s is %s%n", command, filePath);
             }
         }
+    }
+
+    private void handlePwd() {
+        System.out.printf("%s%n", System.getProperty("user.dir"));
+    }
+
+    private void handleExit() {
+        System.exit(0);
     }
 
     // --- helpers ---
