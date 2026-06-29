@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
@@ -7,6 +8,7 @@ public class Shell {
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
+        //noinspection InfiniteLoopStatement
         while (true) {
             System.out.print("$ ");
             String input = scanner.nextLine();
@@ -41,6 +43,15 @@ public class Shell {
         if (BUILTINS.contains(command)) {
             System.out.printf("%s is a shell builtin%n", command);
         } else {
+            String pathEnv = System.getenv("PATH");
+            String[] directories = pathEnv.split(":");
+            for (String directory : directories) {
+                File file = new File(String.format("%s/%s", directory, command));
+                if (file.exists() && file.isFile() && file.canExecute()) {
+                    System.out.printf("%s is %s%n", command, file.getAbsoluteFile());
+                    return;
+                }
+            }
             System.out.printf("%s: not found%n", command);
         }
     }
