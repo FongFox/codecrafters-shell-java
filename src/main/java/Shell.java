@@ -67,11 +67,12 @@ public class Shell {
 
     // --- fallback ---
     private void handleUnknown(String command, String[] arguments) {
-        if (findInPath(command) == null) {
+        String filePath = findInPath(command);
+        if (filePath == null) {
             System.out.printf("%s: command not found%n", command);
         } else {
             List<String> cmd = new ArrayList<>();
-            cmd.add(command);
+            cmd.add(filePath);
             cmd.addAll(Arrays.asList(arguments));
             ProcessBuilder processBuilder = new ProcessBuilder(cmd);
             processBuilder.inheritIO();
