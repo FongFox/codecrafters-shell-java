@@ -1,4 +1,5 @@
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Set;
@@ -43,17 +44,27 @@ public class Shell {
         if (BUILTINS.contains(command)) {
             System.out.printf("%s is a shell builtin%n", command);
         } else {
-            String pathEnv = System.getenv("PATH");
-            String[] directories = pathEnv.split(":");
-            for (String directory : directories) {
-                File file = new File(String.format("%s/%s", directory, command));
-                if (file.exists() && file.isFile() && file.canExecute()) {
-                    System.out.printf("%s is %s%n", command, file.getAbsoluteFile());
-                    return;
-                }
+            String filePath = findInPath(command);
+            if (filePath == null) {
+                System.out.printf("%s: not found%n", command);
+            } else {
+                System.out.printf("%s is %s%n", command, filePath);
             }
-            System.out.printf("%s: not found%n", command);
         }
+    }
+
+    // --- helpers ---
+    private String findInPath(String command) {
+        String pathEnv = System.getenv("PATH");
+        String[] directories = pathEnv.split(":");
+        for (String directory : directories) {
+            Path filePath = Path.of(directory, command);
+            if (Files.isRegularFile(filePath) && Files.isExecutable(filePath)) {
+                return filePath.toAbsolutePath().toString();
+            }
+        }
+
+        return null;
     }
 
     // --- fallback ---
