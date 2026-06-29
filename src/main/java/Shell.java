@@ -1,8 +1,7 @@
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class Shell {
     private static final Set<String> BUILTINS = Set.of("echo", "type", "exit");
@@ -24,7 +23,7 @@ public class Shell {
                 case "echo" -> handleEcho(arguments);
                 case "type" -> handleType(arguments);
                 case "exit" -> handleExit();
-                default -> handleUnknown(input);
+                default -> handleUnknown(command, arguments);
             }
         }
     }
@@ -38,7 +37,6 @@ public class Shell {
         System.exit(0);
     }
 
-    // Todo next stage
     private void handleType(String[] arguments) {
         String command = arguments[0];
         if (BUILTINS.contains(command)) {
@@ -68,7 +66,30 @@ public class Shell {
     }
 
     // --- fallback ---
-    private void handleUnknown(String input) {
-        System.out.printf("%s: command not found%n", input);
+    private void handleUnknown(String command, String[] arguments) {
+        if (findInPath(command) == null) {
+            System.out.printf("%s: command not found%n", command);
+        } else {
+            List<String> cmd = new ArrayList<>();
+            cmd.add(command);
+            cmd.addAll(Arrays.asList(arguments));
+            ProcessBuilder processBuilder = new ProcessBuilder(cmd);
+            processBuilder.inheritIO();
+            try {
+                Process process = processBuilder.start();
+                try {
+                    process.waitFor();
+                } catch (InterruptedException e) {
+                    //print exception
+                    System.err.printf("[InterruptedException] %s%n", e.getMessage());
+                    e.printStackTrace(System.err);
+                    Thread.currentThread().interrupt();
+                }
+            } catch (IOException e) {
+                // print exception
+                System.err.printf("[IOException] %s%n", e.getMessage());
+                e.printStackTrace(System.err);
+            }
+        }
     }
 }
