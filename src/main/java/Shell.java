@@ -49,8 +49,12 @@ public class Shell {
     }
 
     private void handlePwd() {
-        System.out.printf("%s%n", System.getProperty("user.dir"));
+        String currentDirectoryPath = System.getProperty("user.dir");
+        System.out.printf("%s%n", currentDirectoryPath);
     }
+
+    //TODO "The cd builtin" Section
+    private void handleCd(String[] arguments) {}
 
     private void handleExit() {
         System.exit(0);
