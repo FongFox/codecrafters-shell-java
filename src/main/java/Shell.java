@@ -108,7 +108,7 @@ public class Shell {
             } else if (!inSingleQuotes && c == ' ') {
                 if (!current.isEmpty()) {
                     tokens.add(current.toString());
-                    current = new StringBuilder();
+                    current.setLength(0);
                 }
             } else {
                 current.append(c);
