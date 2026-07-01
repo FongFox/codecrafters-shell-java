@@ -4,7 +4,11 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class Shell {
-    private static final Set<String> BUILTINS = Set.of("echo", "type", "pwd", "exit");
+    private static final Set<String> BUILTINS = Set.of("echo", "type", "pwd", "cd", "exit");
+    private Path currentDirectoryPath = Path.of(System.getProperty("user.dir"));
+
+    public Shell() {
+    }
 
     public void run() {
         Scanner scanner = new Scanner(System.in);
@@ -23,6 +27,7 @@ public class Shell {
                 case "echo" -> handleEcho(arguments);
                 case "type" -> handleType(arguments);
                 case "pwd" -> handlePwd();
+                case "cd" -> handleCd(arguments);
                 case "exit" -> handleExit();
                 default -> handleUnknown(command, arguments);
             }
@@ -49,12 +54,18 @@ public class Shell {
     }
 
     private void handlePwd() {
-        String currentDirectoryPath = System.getProperty("user.dir");
         System.out.printf("%s%n", currentDirectoryPath);
     }
 
     //TODO "The cd builtin" Section
-    private void handleCd(String[] arguments) {}
+    private void handleCd(String[] arguments) {
+        Path targetPath = currentDirectoryPath.resolve(arguments[0]).normalize();
+        if (!Files.isDirectory(targetPath)) {
+            System.out.printf("cd: %s: No such file or directory%n", arguments[0]);
+        } else {
+            currentDirectoryPath = targetPath;
+        }
+    }
 
     private void handleExit() {
         System.exit(0);
