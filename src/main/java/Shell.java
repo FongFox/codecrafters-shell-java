@@ -17,7 +17,7 @@ public class Shell {
                 continue;
             }
 
-            String[] words = input.split(" ");
+            String[] words = parseArguments(input);
             String command = words[0];
             String[] arguments = Arrays.copyOfRange(words, 1, words.length);
             switch (command) {
@@ -56,7 +56,7 @@ public class Shell {
 
     private void handleCd(String[] arguments) {
         Path targetPath;
-        String home =  Objects.requireNonNullElse(System.getenv("HOME"), System.getProperty("user.home"));
+        String home = Objects.requireNonNullElse(System.getenv("HOME"), System.getProperty("user.home"));
 
         if (arguments.length == 0) {
             currentDirectoryPath = Path.of(home);
@@ -93,6 +93,33 @@ public class Shell {
         }
 
         return null;
+    }
+
+    private String[] parseArguments(String input) {
+        var tokens = new ArrayList<String>();
+        var current = new StringBuilder();
+        boolean inSingleQuotes = false;
+
+        for (char c : input.toCharArray()) {
+            if (!inSingleQuotes && c == '\'') {
+                inSingleQuotes = true;
+            } else if (inSingleQuotes && c == '\'') {
+                inSingleQuotes = false;
+            } else if (!inSingleQuotes && c == ' ') {
+                if (!current.isEmpty()) {
+                    tokens.add(current.toString());
+                    current = new StringBuilder();
+                }
+            } else {
+                current.append(c);
+            }
+        }
+
+        if (!current.isEmpty()) {
+            tokens.add(current.toString());
+        }
+
+        return tokens.toArray(new String[0]);
     }
 
     // --- fallback ---
