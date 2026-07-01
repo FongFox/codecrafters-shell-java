@@ -54,7 +54,6 @@ public class Shell {
         System.out.printf("%s%n", currentDirectoryPath);
     }
 
-    //TODO "The cd builtin" Section
     private void handleCd(String[] arguments) {
         Path targetPath = currentDirectoryPath.resolve(arguments[0]).normalize();
         if (!Files.isDirectory(targetPath)) {
