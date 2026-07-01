@@ -55,7 +55,20 @@ public class Shell {
     }
 
     private void handleCd(String[] arguments) {
-        Path targetPath = currentDirectoryPath.resolve(arguments[0]).normalize();
+        if (arguments.length == 0) {
+            currentDirectoryPath = Path.of(System.getProperty("user.home"));
+            return;
+        }
+
+        Path targetPath;
+
+        if (arguments[0].startsWith("~")) {
+            String path = arguments[0].replace("~", System.getProperty("user.home"));
+            targetPath = Path.of(path).normalize();
+        } else {
+            targetPath = currentDirectoryPath.resolve(arguments[0]).normalize();
+        }
+
         if (!Files.isDirectory(targetPath)) {
             System.out.printf("cd: %s: No such file or directory%n", arguments[0]);
         } else {
