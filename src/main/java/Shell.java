@@ -7,9 +7,6 @@ public class Shell {
     private static final Set<String> BUILTINS = Set.of("echo", "type", "pwd", "cd", "exit");
     private Path currentDirectoryPath = Path.of(System.getProperty("user.dir"));
 
-    public Shell() {
-    }
-
     public void run() {
         Scanner scanner = new Scanner(System.in);
         //noinspection InfiniteLoopStatement
@@ -92,7 +89,7 @@ public class Shell {
             System.out.printf("%s: command not found%n", command);
         } else {
             List<String> cmd = new ArrayList<>();
-            cmd.add(command);
+            cmd.add(filePath);
             cmd.addAll(Arrays.asList(arguments));
             ProcessBuilder processBuilder = new ProcessBuilder(cmd);
             processBuilder.inheritIO();
