@@ -55,12 +55,13 @@ public class Shell {
     }
 
     private void handleCd(String[] arguments) {
+        Path targetPath;
+        String home =  Objects.requireNonNull(System.getenv("HOME"), System.getProperty("user.home"));
+
         if (arguments.length == 0) {
-            currentDirectoryPath = Path.of(System.getProperty("user.home"));
+            currentDirectoryPath = Path.of(home);
             return;
         }
-
-        Path targetPath;
 
         if (arguments[0].startsWith("~")) {
             String path = arguments[0].replace("~", System.getProperty("user.home"));
