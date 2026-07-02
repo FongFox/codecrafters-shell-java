@@ -95,28 +95,63 @@ public class Shell {
         return null;
     }
 
+//    private String[] parseArguments(String input) {
+//        var tokens = new ArrayList<String>();
+//        var current = new StringBuilder();
+//        boolean inSingleQuotes = false;
+//
+//        for (char c : input.toCharArray()) {
+//            if (!inSingleQuotes && c == '\'') {
+//                inSingleQuotes = true;
+//            } else if (inSingleQuotes && c == '\'') {
+//                inSingleQuotes = false;
+//            } else if (!inSingleQuotes && c == ' ') {
+//                if (!current.isEmpty()) {
+//                    tokens.add(current.toString());
+//                    current.setLength(0);
+//                }
+//            } else {
+//                current.append(c);
+//            }
+//        }
+//
+//        if (!current.isEmpty()) {
+//            tokens.add(current.toString());
+//        }
+//
+//        return tokens.toArray(new String[0]);
+//    }
+
     private String[] parseArguments(String input) {
         var tokens = new ArrayList<String>();
-        var current = new StringBuilder();
-        boolean inSingleQuotes = false;
+        var currentToken = new StringBuilder();
+        /*
+         * 0 = không trong dấu nháy nào;
+         * '\'' = đang trong '...';
+         * '"'  = đang trong "..."
+         */
+        char openQuote = 0;
 
         for (char c : input.toCharArray()) {
-            if (!inSingleQuotes && c == '\'') {
-                inSingleQuotes = true;
-            } else if (inSingleQuotes && c == '\'') {
-                inSingleQuotes = false;
-            } else if (!inSingleQuotes && c == ' ') {
-                if (!current.isEmpty()) {
-                    tokens.add(current.toString());
-                    current.setLength(0);
+            if (openQuote == 0 && c == '\'') {
+                openQuote = c;
+            } else if (openQuote == 0 && c == '"') {
+                openQuote = c;
+            } else if (openQuote == 0 && c == ' ') {
+                if (!currentToken.isEmpty()) {
+                    tokens.add(currentToken.toString());
+                    currentToken.setLength(0);
                 }
+            } else if (openQuote != 0 && openQuote == c) {
+                openQuote = 0;
             } else {
-                current.append(c);
+                currentToken.append(c);
             }
         }
 
-        if (!current.isEmpty()) {
-            tokens.add(current.toString());
+        if (!currentToken.isEmpty()) {
+            tokens.add(currentToken.toString());
+            currentToken.setLength(0);
         }
 
         return tokens.toArray(new String[0]);
